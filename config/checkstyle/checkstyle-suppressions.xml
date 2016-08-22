@@ -4,4 +4,5 @@
         "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
 <suppressions>
     <suppress files="Application\.java" checks="HideUtilityClassConstructor" />
+    <suppress files="Kml2Map\.java" checks="HideUtilityClassConstructor" />
 </suppressions>

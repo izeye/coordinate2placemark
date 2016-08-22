@@ -35,6 +35,9 @@ dependencies {
     provided("org.projectlombok:lombok")
 
     testCompile("org.springframework.boot:spring-boot-starter-test")
+
+    // To avoid `java.lang.ClassNotFoundException: org.apache.commons.logging.LogFactory`
+    testCompile("commons-logging:commons-logging")
 }
 
 task wrapper(type: Wrapper) {
