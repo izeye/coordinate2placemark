@@ -36,13 +36,44 @@ public class Placemark {
 	private final List<Polygon> polygons = new ArrayList<>();
 
 	private final List<Path2D> paths = new ArrayList<>();
+	private final List<Path2D> pathsToExclude = new ArrayList<>();
 
 	public void addPolygon(Polygon polygon) {
 		this.polygons.add(polygon);
-		this.paths.add(polygon2Path(polygon));
+
+		Path2D path = polygon2Path(polygon);
+
+		// Handle a surrounding case.
+		for (int i = 0; i < this.polygons.size() - 1; i++) {
+			Polygon p = this.polygons.get(i);
+			Polygon.Coordinate coordinate = p.getCoordinates().get(0);
+			if (path.contains(coordinate.getLatitude(), coordinate.getLongitude())) {
+				Path2D surrounded = this.paths.remove(i);
+				this.pathsToExclude.add(surrounded);
+				this.paths.add(path);
+				return;
+			}
+		}
+
+		// Handle a surrounded case.
+		for (Path2D p : this.paths) {
+			Polygon.Coordinate coordinate = polygon.getCoordinates().get(0);
+			if (p.contains(coordinate.getLatitude(), coordinate.getLongitude())) {
+				this.pathsToExclude.add(path);
+				return;
+			}
+		}
+
+		this.paths.add(path);
 	}
 
 	public boolean containsCoordinate(double latitude, double longitude) {
+		for (Path2D pathToExclude : this.pathsToExclude) {
+			boolean result = pathToExclude.contains(latitude, longitude);
+			if (result) {
+				return false;
+			}
+		}
 		for (Path2D path : this.paths) {
 			boolean result = path.contains(latitude, longitude);
 			if (result) {

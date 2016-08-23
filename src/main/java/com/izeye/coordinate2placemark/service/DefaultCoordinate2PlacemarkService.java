@@ -42,16 +42,10 @@ public class DefaultCoordinate2PlacemarkService implements Coordinate2PlacemarkS
 	private static final String SOUTH_KOREA_FILENAME =
 			"src/main/resources/skorea_provinces_simple.kml";
 
-	// NOTE:
-	// `광주광역시` is surrounded by `전라남도`,
-	// so it's impossible to detect with the current algorithm.
-	private static final String EXCEPTIONAL_PLACEMARK_NAME = "광주광역시";
-
 	private final List<Placemark> placemarks;
 
 	public DefaultCoordinate2PlacemarkService() {
 		List<Placemark> placemarks = new ArrayList<>();
-		Placemark exceptionalPlacemark = null;
 
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
@@ -78,12 +72,7 @@ public class DefaultCoordinate2PlacemarkService implements Coordinate2PlacemarkS
 					}
 					placemark.addPolygon(polygon);
 				}
-				if (placemark.getName().equals(EXCEPTIONAL_PLACEMARK_NAME)) {
-					exceptionalPlacemark = placemark;
-				}
-				else {
-					placemarks.add(placemark);
-				}
+				placemarks.add(placemark);
 			}
 		}
 		catch (ParserConfigurationException ex) {
@@ -95,7 +84,6 @@ public class DefaultCoordinate2PlacemarkService implements Coordinate2PlacemarkS
 		catch (IOException ex) {
 			throw new RuntimeException(ex);
 		}
-		placemarks.add(0, exceptionalPlacemark);
 
 		this.placemarks = placemarks;
 	}
